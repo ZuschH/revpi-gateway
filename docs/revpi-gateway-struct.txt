@@ -1,0 +1,32 @@
+revpi-gateway/
+│
+├─ README.md
+├─ LICENSE
+├─ VERSION
+│
+├─ install.sh
+├─ uninstall.sh
+│
+├─ config/
+│   ├─ revpi-gateway.conf
+│   ├─ nftables.conf
+│   ├─ sysctl.conf
+│
+├─ nftables/
+│   ├─ portforwards_tcp.nft
+│   ├─ portforwards_udp.nft
+│
+├─ scripts/
+│   ├─ revpi-firewall-report
+│   ├─ revpi-gateway-export
+│
+├─ systemd/
+│   └─ revpi-gateway.service
+│
+├─ docs/
+│   ├─ architecture.md
+│   ├─ ports.md
+│   ├─ deployment.md
+│
+└─ tools/
+    └─ build-offline-bundle.sh
