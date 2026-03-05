@@ -1,0 +1,39 @@
+
+Installation from GitHub:
+=========================
+
+sudo apt-get update && sudo apt-get install -y git
+git clone <EURE_GITHUB_URL>/revpi-gateway.git
+cd revpi-gateway
+sudo ./install.sh
+
+
+Installation from URL:
+======================
+
+curl -fsSL <URL_ZU_RELEASE_TAR_GZ> | tar xz
+cd revpi-gateway
+sudo ./install.sh
+
+
+Installation from *.tar.gz:
+===========================
+
+git clone ...
+tar czf revpi-gateway-bundle.tar.gz revpi-gateway/
+
+tar xzf revpi-gateway-bundle.tar.gz
+cd revpi-gateway
+sudo ./install.sh
+
+
+
+
+./build-offline-bundle.sh 0.1.0
+tar xzf revpi-gateway-offline-0.1.0.tar.gz
+cd revpi-gateway
+sudo ./install.sh --offline
+
+
+
+

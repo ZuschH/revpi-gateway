@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${EUID}" -ne 0 ]]; then
+  echo "Bitte als root ausführen: sudo $0" >&2
+  exit 1
+fi
+
+echo "== Stop nftables =="
+systemctl disable --now nftables 2>/dev/null || true
+
+echo "== Entferne Dateien =="
+rm -f /usr/local/sbin/revpi-firewall-report
+rm -f /etc/sysctl.d/99-revpi-gateway.conf
+rm -f /etc/nftables.d/portforwards_tcp.nft
+rm -f /etc/nftables.d/portforwards_udp.nft
+rm -f /etc/nftables.d/README.portforwards.txt
+rm -f /etc/revpi-gateway.conf
+
+# nftables.conf nicht hart löschen — nur Hinweis
+echo "HINWEIS: /etc/nftables.conf wurde nicht gelöscht."
+echo "Falls du auf Default zurück willst, spiele ein Backup ein: /etc/nftables.conf.bak.*"
+
+echo "== sysctl reload =="
+sysctl --system >/dev/null || true
+
+echo "OK: Uninstall fertig."
+
+
