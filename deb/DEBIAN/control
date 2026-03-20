@@ -1,0 +1,10 @@
+Package: revpi-gateway
+Version: 1.0.0
+Section: net
+Priority: optional
+Architecture: all
+Maintainer: ZuschH <ZuschH@gmx.de>
+Depends: nftables, vsftpd
+Description: RevPi Gateway (nftables NAT + FTP proxy)
+ Industrial gateway solution for Revolution Pi with NAT, firewall and FTP proxy.
+  
