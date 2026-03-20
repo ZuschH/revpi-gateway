@@ -112,7 +112,7 @@ This project provides a complete, reproducible setup for:
 🔧 Installer Behavior
   Modes
   -----
-     Mode	   Description
+    Mode	   Description
     +-------------+--------------------------+
     | Install	  | Full setup               |
     | Update	  | Keeps port forwarding    |
