@@ -74,25 +74,25 @@ This project provides a complete, reproducible setup for:
 📁 Repository Structure
 ========================
   revpi-gateway/
-  │
-  ├── install.sh
-  ├── README.md
-  │
-  ├── etc/
-  │   ├── nftables.conf
-  │   ├── nftables.d/
-  │   │   ├── portforwards_tcp.nft
-  │   │   └── portforwards_udp.nft
-  │   │
-  │   ├── vsftpd.conf
-  │   ├── sysctl.d/
-  │   │   └── 99-revpi-gateway.conf
-  │   │
-  │   └── revpi-gateway/
-  │       └── revpi-gateway.conf
-  │
-  └── scripts/
-      └── revpi-firewall-report
+    │
+    ├── install.sh
+    ├── README.md
+    │
+    ├── etc/
+    │   ├── nftables.conf
+    │   ├── nftables.d/
+    │   │   ├── portforwards_tcp.nft
+    │   │   └── portforwards_udp.nft
+    │   │
+    │   ├── vsftpd.conf
+    │   ├── sysctl.d/
+    │   │   └── 99-revpi-gateway.conf
+    │   │
+    │   └── revpi-gateway/
+    │       └── revpi-gateway.conf
+    │
+    └── scripts/
+    └── revpi-firewall-report
 
 
 ⚙️ Installation
