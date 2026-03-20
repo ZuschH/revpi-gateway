@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+echo "== RevPi Gateway Post-Install =="
+
+# Disable firewalld
+systemctl disable --now firewalld 2>/dev/null || true
+
+# Enable IP forwarding
+sysctl -w net.ipv4.ip_forward=1
+
+# Enable nftables
+systemctl enable nftables
+systemctl restart nftables
+
+# Enable vsftpd
+systemctl enable vsftpd
+systemctl restart vsftpd
+
+# Enable PASV updater
+systemctl daemon-reload
+systemctl enable vsftpd-pasv-update.service
+systemctl start vsftpd-pasv-update.service
+
+echo "Installation complete"
