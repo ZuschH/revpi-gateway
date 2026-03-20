@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
+: "${WAN_IF:=eth1}"
+: "${LAN_IF:=eth0}"
+: "${FTP_MODE:=dhcp}"
+: "${FTP_PASV_IP:=}"
+
 VERSION_FILE="./VERSION.txt"
-INSTALL_VERSION="unknown"
+INSTALL_VERSION="0.1.1"
 INSTALL_GIT="nogit"
 
 if [[ -f "$VERSION_FILE" ]]; then
@@ -29,7 +34,24 @@ EXPORT_FILE=""
 FTP_USER=""
 FTP_PW=""
 
+AUTO_MODE=0
+DRY_RUN=0
 
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --auto)
+      AUTO_MODE=1
+      shift
+      ;;
+    --dry-run)
+      DRY_RUN=1
+      shift
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
 
 usage() {
   cat <<'EOF'
@@ -92,7 +114,21 @@ ensure_dirs() {
   run "chmod -R 755 /srv/ftp"
 }
 
+log() {
+  echo "[INFO] $*"
+}
+
+run() {
+  echo "+ $*"
+  [[ "$DRY_RUN" -eq 1 ]] || eval "$@"
+}
+
 choose_ftp_mode() {
+  if [[ "$AUTO_MODE" -eq 1 ]]; then
+    echo "$FTP_MODE"
+    return
+  fi
+  
   echo "== FTP PASV configuration ==" >&2
   echo "1) Static WAN IP (manual)" >&2
   echo "2) DHCP auto-detect (recommended)" >&2
@@ -140,6 +176,11 @@ setup_vsftpd_pasv() {
 }
 
 ask_static_ip() {
+  if [[ "$AUTO_MODE" -eq 1 ]]; then
+    echo "$FTP_PASV_IP"
+    return
+  fi
+
   local ip
   read -r -p "Enter WAN IP for FTP PASV: " ip
   echo "$ip"
@@ -649,6 +690,11 @@ detect_installation() {
 }
 
 choose_action() {
+  if [[ "$AUTO_MODE" -eq 1 ]]; then
+    echo "install"
+    return
+  fi
+  
   if detect_installation; then
     echo "Detected existing installation." >&2
     echo "  1) Update/Repair (recommended; Portforwards will remain the same)" >&2
@@ -725,6 +771,12 @@ echo " Dry-Run: $([[ "$DRY_RUN" == "1" ]] && echo YES || echo NO)"
 echo " Backups: $BACKUP_ROOT"
 echo "=================================================="
 echo
+
+if [[ "$AUTO_MODE" -eq 1 && "$FTP_MODE" == "static" && -z "$FTP_PASV_IP" ]]; then
+  echo "ERROR: FTP_PASV_IP required in AUTO mode (static)"
+  exit 1
+fi
+
 echo "Actual Interfaces:"
 ip -br a || true
 echo
@@ -734,13 +786,11 @@ if [[ "$ACTION" == "abort" ]]; then
   echo "Aborted."
   exit 0
 fi
-
 WAN_IF="$(prompt_default "WAN Interface (customer network)" "$WAN_IF_DEFAULT")"
 LAN_IF="$(prompt_default "LAN Interface (machine LAN / el. box)" "$LAN_IF_DEFAULT")"
 LAN_NET="$(prompt_default "LAN net (CIDR)" "$LAN_NET_DEFAULT")"
 FTP_MODE="dhcp"     # dhcp | static
 FTP_PASV_IP=""      # nur bei static
-
 echo
 echo "Action: $ACTION"
 echo "Configuration:"
@@ -748,31 +798,48 @@ echo "  WAN_IF = $WAN_IF"
 echo "  LAN_IF = $LAN_IF"
 echo "  LAN_NET= $LAN_NET"
 echo
-
 if ! exists_iface "$WAN_IF"; then echo "WARN: Interface '$WAN_IF' does not exist." >&2; fi
 if ! exists_iface "$LAN_IF"; then echo "WARN: Interface '$LAN_IF' does not exist." >&2; fi
-
 if ! confirm "Continue? (Backup will be created)"; then
   echo "Aborted."
   exit 0
 fi
-
-do_backup
 chmod +x build-offline-bundle.sh
 chmod +x uninstall.sh
-
+echo
+echo "Creating configuration backup"
+do_backup
+echo "Done."
+echo
 if [[ "$OFFLINE" == "1" ]]; then
+  echo "Installing offline packages..."
   install_packages_offline
+  echo "Donw."
 else
+  echo "Installing online packages..."
   install_packages_online
+  echo "Done."
 fi
-
+echo
+echo "Enabling IP forwarding..."
 enable_ip_forward
+echo "Done."
+echo "Deploying base configuration and script files..."
 deploy_base_files
+echo "Done."
+echo
+echo "Deploying port forwarding rules, if any..."
 deploy_portforwards_if_needed "$ACTION"
+echo "Done."
+echo
+echo "Patch WAN config..."
 patch_config "$WAN_IF" "$LAN_NET"
+echo "Done."
+echo
+echo "Saving app config for later recall..."
 save_app_conf "$WAN_IF" "$LAN_IF" "$LAN_NET"
-
+echo "Done."
+echo
 echo "== Write marker =="
 if [[ "$DRY_RUN" == "1" ]]; then
   echo "DRY-RUN> would write: $MARKER"
@@ -780,38 +847,50 @@ else
   echo "installed $(date -Is)" > "$MARKER"
   chmod 0644 "$MARKER"
 fi
-
+echo "Done"
+echo
+echo "Disabling conflicting firewalls..."
 disable_conflicting_firewalls
+echo "Done."
+echo
+echo "Applying nftables..."
 apply_nftables
+echo "Done."
+echo
+echo "Setting up FTP server environment..."
 setup_ftp_env
 FTP_MODE="$(choose_ftp_mode)"
-
 if [[ "$FTP_MODE" == "static" ]]; then
   FTP_PASV_IP="$(ask_static_ip)"
 else
   FTP_PASV_IP=""
 fi
-
 save_ftp_config "$FTP_MODE" "$FTP_PASV_IP"
-
 setup_vsftpd_pasv
 install_vsftpd_pasv_helper
 install_vsftpd_pasv_service
 install_dhcp_hook
-
+echo "Done."
+echo
+echo "Restarting vsftpd..."
 systemctl restart vsftpd
-
+echo "Done."
 echo
 echo "$(date) Updated PASV IP to $WAN_IP" >> /var/log/vsftpd-pasv.log
 echo
-
+echo "Performing smoke tests..."
 smoke_tests
-
+echo "Done."
+echo
+echo "Summary:"
+echo "========"
 echo
 echo "OK: Gateway $ACTION completed."
+echo
 echo "Portforwards:"
 echo "  /etc/nftables.d/portforwards_tcp.nft"
 echo "  /etc/nftables.d/portforwards_udp.nft"
+echo
 echo "Backup directory: $BACKUP_ROOT"
 
 
