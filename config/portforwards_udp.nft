@@ -1,3 +1,0 @@
-# WAN -> LAN UDP Portforwards (DNAT)
-# Beispiel:
-# iifname "eth1" udp dport 161 dnat to 192.168.19.50:161
