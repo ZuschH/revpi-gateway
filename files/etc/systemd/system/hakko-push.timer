@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Hakko push periodically
+
+[Timer]
+OnBootSec=30
+OnUnitActiveSec=30
+
+[Install]
+WantedBy=timers.target
+

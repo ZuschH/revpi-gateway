@@ -1,0 +1,19 @@
+revpi-gateway offline bundle
+===========================
+
+Version:        0.1.0
+Build-Date:     2026-03-20T08:24:43+00:00
+Build-Host:     RevPi100368
+OS:             Debian GNU/Linux 12 (bookworm)
+Arch:           arm64
+Git-Rev:        d3c52d9
+Git-Dirty:      yes
+
+Install:
+  sudo ./install.sh --offline
+
+Dry-run:
+  sudo ./install.sh --dry-run
+
+Export config:
+  sudo ./install.sh --export /mnt/usb/revpi-gateway-export.tar.gz

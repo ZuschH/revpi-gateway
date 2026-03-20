@@ -19,7 +19,7 @@ OUTDIR="${OUTDIR:-dist}"
 WITH_PACKAGES="${WITH_PACKAGES:-1}"
 
 if [[ ! -f "./install.sh" || ! -d "./files" ]]; then
-  echo "ERROR: Bitte im Repo-Root (revpi-gateway/) ausführen." >&2
+  echo "ERROR: Please run script in repo root folder (revpi-gateway/)." >&2
   exit 1
 fi
 
@@ -79,9 +79,9 @@ else
 fi
 
 if [[ "$WITH_PACKAGES" == "1" ]]; then
-  echo "== Download Debian Pakete (inkl. Dependencies) =="
+  echo "== Download Debian packages (incl. Dependencies) =="
   if ! command -v apt-get >/dev/null 2>&1; then
-    echo "ERROR: apt-get nicht gefunden. Bitte auf Debian/Ubuntu Build-System ausführen." >&2
+    echo "ERROR: apt-get not found. Please run this on the Debian/Ubuntu build system." >&2
     exit 1
   fi
 
@@ -120,17 +120,17 @@ fi
 # Create bundle
 OUTFILE="$OUTDIR/revpi-gateway-offline-${VERSION}-${ARCH}.tar.gz"
 
-echo "== Bundle erstellen: $OUTFILE =="
+echo "== Create bundle: $OUTFILE =="
 tar czf "$OUTFILE" \
   --exclude-vcs \
   --exclude="$OUTDIR" \
   .
 
-echo "== Fertig =="
+echo "== Finished =="
 echo "Bundle: $OUTFILE"
-echo "Info:   ./BUNDLE_INFO.txt (im Bundle enthalten)"
+echo "Info:   ./BUNDLE_INFO.txt (included in the Bundle)"
 echo
-echo "Auf dem RevPi:"
+echo "On RevPi:"
 echo "  tar xzf $(basename "$OUTFILE")"
 echo "  cd revpi-gateway"
 echo "  sudo ./install.sh --offline"

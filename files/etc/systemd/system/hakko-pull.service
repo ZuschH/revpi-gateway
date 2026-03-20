@@ -1,0 +1,7 @@
+[Unit]
+Description=Pull files from Hakko FTP to local out directory
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/hakko-pull.sh
+

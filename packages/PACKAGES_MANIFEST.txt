@@ -1,0 +1,3 @@
+lftp_4.9.2-2_arm64.deb
+tcpdump_4.99.3-1_arm64.deb
+vsftpd_3.0.3-13+b2_arm64.deb

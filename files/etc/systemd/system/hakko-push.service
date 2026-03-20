@@ -1,0 +1,7 @@
+[Unit]
+Description=Push files from local in directory to Hakko FTP
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/hakko-push.sh
+

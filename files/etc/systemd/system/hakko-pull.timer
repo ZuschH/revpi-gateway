@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Hakko pull periodically
+
+[Timer]
+OnBootSec=20
+OnUnitActiveSec=60
+
+[Install]
+WantedBy=timers.target
+
