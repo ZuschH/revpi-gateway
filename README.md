@@ -73,41 +73,41 @@ This project provides a complete, reproducible setup for:
 
 📁 Repository Structure
 ========================
-revpi-gateway/
-│
-├── install.sh
-├── README.md
-│
-├── etc/
-│   ├── nftables.conf
-│   ├── nftables.d/
-│   │   ├── portforwards_tcp.nft
-│   │   └── portforwards_udp.nft
-│   │
-│   ├── vsftpd.conf
-│   ├── sysctl.d/
-│   │   └── 99-revpi-gateway.conf
-│   │
-│   └── revpi-gateway/
-│       └── revpi-gateway.conf
-│
-└── scripts/
-    └── revpi-firewall-report
+  revpi-gateway/
+  │
+  ├── install.sh
+  ├── README.md
+  │
+  ├── etc/
+  │   ├── nftables.conf
+  │   ├── nftables.d/
+  │   │   ├── portforwards_tcp.nft
+  │   │   └── portforwards_udp.nft
+  │   │
+  │   ├── vsftpd.conf
+  │   ├── sysctl.d/
+  │   │   └── 99-revpi-gateway.conf
+  │   │
+  │   └── revpi-gateway/
+  │       └── revpi-gateway.conf
+  │
+  └── scripts/
+      └── revpi-firewall-report
 
 
 ⚙️ Installation
 ================
   Interactive (default)
-    sudo ./install.sh
+      sudo ./install.sh
     
   Non-Interactive (automated)
-    sudo ./install.sh --auto
+      sudo ./install.sh --auto
 
   With parameters
-    sudo FTP_MODE=dhcp WAN_IF=eth1 LAN_IF=eth0 ./install.sh --auto
+      sudo FTP_MODE=dhcp WAN_IF=eth1 LAN_IF=eth0 ./install.sh --auto
 
   Static FTP IP example
-    sudo FTP_MODE=static FTP_PASV_IP=192.168.200.47 ./install.sh --auto
+      sudo FTP_MODE=static FTP_PASV_IP=192.168.200.47 ./install.sh --auto
     
 🔧 Installer Behavior
   Modes
